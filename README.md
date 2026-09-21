@@ -119,18 +119,20 @@ environment:
 - 兼容 `POST /v1/images/edits` 图片编辑接口
 - 兼容面向图片场景的 `POST /v1/chat/completions`
 - 兼容面向图片场景的 `POST /v1/responses`
-- `GET /v1/models` 返回 `gpt-image-2`、`codex-gpt-image-2`、`auto`、`gpt-5`、`gpt-5-1`、`gpt-5-2`、`gpt-5-3`、`gpt-5-3-mini`、
+- `GET /v1/models` 返回 `gpt-image-2`、`gpt-image-2.5-flare`、`gpt-image-2.5-sunburst`、`codex-gpt-image-2`、`codex-gpt-image-2.5-flare`、`codex-gpt-image-2.5-sunburst`、`auto`、`gpt-5`、`gpt-5-1`、`gpt-5-2`、`gpt-5-3`、`gpt-5-3-mini`、
   `gpt-5-mini`
 - 支持通过 `n` 返回多张生成结果
 - 支持生成可编辑 PPT 文件
 - 支持生成可编辑 PSD 文件
 - 支持 Codex 中的画图接口逆向，仅 `Plus` / `Team` / `Pro` 订阅可用，模型别名为 `codex-gpt-image-2`，如有需要可自行在其他场景映射回
   `gpt-image-2`，用于和官网画图区分；也就意味着同一账号会同时有官网和 Codex 两份生图额度
+- 新增 `gpt-image-2.5-flare` 和 `gpt-image-2.5-sunburst`：普通名称通过官网链路原样传递模型 ID；`codex-gpt-image-2.5-flare` 和 `codex-gpt-image-2.5-sunburst` 通过 Codex 链路设置图片工具的模型。
+  Codex 别名也支持 `plus-`、`team-`、`pro-` 前缀，仅使用对应来源和订阅的账号。模型列表与画图工作台按已有账号展示这些名称；上游实际可用性取决于账号权限，官网对新模型 ID 的接受情况尚未实测。
 
 ### 在线画图功能
 
 - 内置在线画图工作台，支持生成、图片编辑与多图组图编辑
-- 支持 `gpt-image-2`、`codex-gpt-image-2`、`auto`、`gpt-5`、`gpt-5-1`、`gpt-5-2`、`gpt-5-3`、`gpt-5-3-mini`、`gpt-5-mini` 模型选择
+- 支持 `gpt-image-2`、`gpt-image-2.5-flare`、`gpt-image-2.5-sunburst`、`codex-gpt-image-2`、`codex-gpt-image-2.5-flare`、`codex-gpt-image-2.5-sunburst`、`auto`、`gpt-5`、`gpt-5-1`、`gpt-5-2`、`gpt-5-3`、`gpt-5-3-mini`、`gpt-5-mini` 模型选择
 - 编辑模式支持参考图上传
 - 前端支持多图生成交互
 - 本地保存图片会话历史，支持回看、删除和清空
@@ -196,7 +198,7 @@ curl http://localhost:8000/v1/models \
 
 | 字段   | 说明                                                                                                         |
 |:-----|:-----------------------------------------------------------------------------------------------------------|
-| 返回模型 | `gpt-image-2`、`codex-gpt-image-2`、`auto`、`gpt-5`、`gpt-5-1`、`gpt-5-2`、`gpt-5-3`、`gpt-5-3-mini`、`gpt-5-mini` |
+| 返回模型 | `gpt-image-2`、`gpt-image-2.5-flare`、`gpt-image-2.5-sunburst`、`codex-gpt-image-2`、`codex-gpt-image-2.5-flare`、`codex-gpt-image-2.5-sunburst`、`auto`、`gpt-5`、`gpt-5-1`、`gpt-5-2`、`gpt-5-3`、`gpt-5-3-mini`、`gpt-5-mini` |
 | 接入场景 | 可接入 Cherry Studio、New API 等上游或客户端                                                                          |
 
 <br>
@@ -272,7 +274,7 @@ curl http://localhost:8000/v1/images/edits \
 
 | 字段          | 说明                                            |
 |:------------|:----------------------------------------------|
-| `model`     | 图片模型， `gpt-image-2`                           |
+| `model`     | 图片模型，支持 `gpt-image-2`、`gpt-image-2.5-flare`、`gpt-image-2.5-sunburst` 及对应 `codex-` 别名；以 `/v1/models` 为准 |
 | `prompt`    | 图片编辑提示词                                       |
 | `n`         | 生成数量，当前后端限制为 `1-4`                            |
 | `image`     | 需要编辑的图片文件，使用 multipart/form-data 上传           |
@@ -337,7 +339,8 @@ curl http://localhost:8000/v1/responses \
     "input": "生成一张未来感城市天际线图片",
     "tools": [
       {
-        "type": "image_generation"
+        "type": "image_generation",
+        "model": "gpt-image-2.5-sunburst"
       }
     ]
   }'
@@ -352,6 +355,7 @@ curl http://localhost:8000/v1/responses \
 | `model`  | 响应中会回显该模型字段，搜索和图片生成会走对应兼容逻辑                                                             |
 | `input`  | 输入内容；搜索使用最后一条用户文本，图片生成需能解析出提示词                                                          |
 | `tools`  | 支持 `image_generation`、`web_search`、`web_search_preview`、`web_search_preview_2025_03_11` |
+| `tools[].model` | `image_generation` 的图片模型，支持官网模型名及 `codex-` 别名；未指定时沿用顶层 `model` |
 | `stream` | 已实现，但仍在测试                                                                               |
 
 <br>

@@ -76,6 +76,15 @@ class AccountCapabilityTests(unittest.TestCase):
         self.assertEqual(split_image_model("plus-gpt-image-2"), (None, None))
         self.assertEqual(split_image_model("unknown-image-model"), (None, None))
 
+    def test_split_image_25_models_preserves_variant_and_codex_plan(self) -> None:
+        for model in ("gpt-image-2.5-flare", "gpt-image-2.5-sunburst"):
+            with self.subTest(model=model):
+                self.assertEqual(split_image_model(f" {model.upper()} "), (None, model))
+                self.assertEqual(split_image_model(f"codex-{model}"), (None, f"codex-{model}"))
+                for plan in ("plus", "team", "pro"):
+                    self.assertEqual(split_image_model(f"{plan}-codex-{model}"), (plan, f"codex-{model}"))
+                    self.assertEqual(split_image_model(f"{plan}-{model}"), (None, None))
+
     def test_get_available_access_token_filters_by_plan_type(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             service = AccountService(JSONStorageBackend(Path(tmp_dir) / "accounts.json"))

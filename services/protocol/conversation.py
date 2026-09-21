@@ -1268,6 +1268,7 @@ def stream_codex_image_outputs(
 ) -> Iterator[ImageOutput]:
     images = _codex_response_images(list(backend.iter_codex_image_response_events(
         prompt=request.prompt,
+        model=request.model,
         images=request.images or [],
         size=request.size,
         quality=request.quality,

@@ -2,6 +2,9 @@
 
 ## Unreleased
 
++ [新增] 接入 `gpt-image-2.5-flare` 和 `gpt-image-2.5-sunburst`，支持官网请求模型直传、Codex 生图别名和订阅前缀，并同步模型列表与在线画图选择。
++ [修复] Responses 图片请求读取 `image_generation` 工具的 `model` 字段，避免忽略指定的图片模型。
+
 ## 1.8.0 - 2026-07-28
 
 + [新增] 新增默认请求上游模型名称和默认思考强度配置，支持在设置页面修改，并可通过模型名的 `-standard`、`-extended`、`-max` 后缀覆盖思考强度。
