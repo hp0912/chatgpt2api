@@ -2,6 +2,7 @@
 
 ## Unreleased
 
++ [新增] 接入 `gpt-image-2.6-flare` 和 `gpt-image-2.6-sunburst`，支持官网生图与编辑、Codex 别名、订阅前缀和 Responses 图片工具，并同步模型列表与接口文档。
 + [新增] 接入 `gpt-image-2.5-flare` 和 `gpt-image-2.5-sunburst`，支持官网请求模型直传、Codex 生图别名和订阅前缀，并同步模型列表与在线画图选择。
 + [修复] Responses 图片请求读取 `image_generation` 工具的 `model` 字段，避免忽略指定的图片模型。
 

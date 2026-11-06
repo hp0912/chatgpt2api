@@ -14,7 +14,12 @@ from services.protocol import conversation, openai_v1_response
 from utils.helper import is_image_chat_request
 
 
-IMAGE_25_MODELS = ("gpt-image-2.5-flare", "gpt-image-2.5-sunburst")
+IMAGE_VARIANT_MODELS = (
+    "gpt-image-2.5-flare",
+    "gpt-image-2.5-sunburst",
+    "gpt-image-2.6-flare",
+    "gpt-image-2.6-sunburst",
+)
 
 
 class ImageModelRoutingTests(unittest.TestCase):
@@ -27,7 +32,7 @@ class ImageModelRoutingTests(unittest.TestCase):
             patcher.start()
             self.addCleanup(patcher.stop)
 
-    def test_web_prepare_and_generate_preserve_image_25_model_with_reference_images(self) -> None:
+    def test_web_prepare_and_generate_preserve_image_model_variants_with_reference_images(self) -> None:
         backend = object.__new__(OpenAIBackendAPI)
         backend.base_url = "https://chatgpt.com"
         backend.session = mock.Mock()
@@ -38,7 +43,7 @@ class ImageModelRoutingTests(unittest.TestCase):
             "file_id": "file-reference", "file_name": "reference.png", "file_size": 10,
             "mime_type": "image/png", "width": 1024, "height": 1024,
         }
-        for model in IMAGE_25_MODELS:
+        for model in IMAGE_VARIANT_MODELS:
             for references in ([], [reference]):
                 with (
                     self.subTest(model=model, edit=bool(references)),
@@ -74,7 +79,7 @@ class ImageModelRoutingTests(unittest.TestCase):
         raw.status = 200
         raw.read.return_value = f"data: {json.dumps(event)}\n\ndata: [DONE]\n\n".encode()
 
-        for model in ("gpt-image-2", *IMAGE_25_MODELS):
+        for model in ("gpt-image-2", *IMAGE_VARIANT_MODELS):
             for prefix in ("codex-", "plus-codex-", "team-codex-", "pro-codex-"):
                 for images in ([], ["data:image/png;base64,aW1hZ2U="]):
                     with (
@@ -100,7 +105,7 @@ class ImageModelRoutingTests(unittest.TestCase):
                     self.assertEqual(events, [event])
 
     def test_image_pool_routes_web_and_codex_models_to_the_correct_accounts(self) -> None:
-        for model in ("gpt-image-2", *IMAGE_25_MODELS):
+        for model in ("gpt-image-2", *IMAGE_VARIANT_MODELS):
             for prefix, plan in (("", None), ("codex-", None), ("team-codex-", "team")):
                 requested_model = prefix + model
                 request = conversation.ConversationRequest(model=requested_model, prompt="draw a cat")
@@ -136,7 +141,7 @@ class ImageModelRoutingTests(unittest.TestCase):
                 backend.close.assert_called_once()
 
     def test_responses_uses_tool_model_and_preserves_top_level_model_in_both_modes(self) -> None:
-        for model in IMAGE_25_MODELS:
+        for model in IMAGE_VARIANT_MODELS:
             for prefix in ("", "codex-"):
                 for stream in (False, True):
                     requested_model = prefix + model

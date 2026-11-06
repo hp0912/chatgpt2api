@@ -39,7 +39,10 @@ class ModelListTests(unittest.TestCase):
         self.assertIn("team-codex-gpt-image-2", ids)
         self.assertNotIn("plus-codex-gpt-image-2", ids)
         self.assertNotIn("pro-codex-gpt-image-2", ids)
-        for model in ("gpt-image-2.5-flare", "gpt-image-2.5-sunburst"):
+        for model in (
+            "gpt-image-2.5-flare", "gpt-image-2.5-sunburst",
+            "gpt-image-2.6-flare", "gpt-image-2.6-sunburst",
+        ):
             with self.subTest(model=model):
                 self.assertIn(model, ids)
                 self.assertIn(f"codex-{model}", ids)
@@ -68,7 +71,10 @@ class ModelListTests(unittest.TestCase):
         self.assertIn("gpt-image-2", ids)
         self.assertNotIn("codex-gpt-image-2", ids)
         self.assertNotIn("plus-codex-gpt-image-2", ids)
-        for model in ("gpt-image-2.5-flare", "gpt-image-2.5-sunburst"):
+        for model in (
+            "gpt-image-2.5-flare", "gpt-image-2.5-sunburst",
+            "gpt-image-2.6-flare", "gpt-image-2.6-sunburst",
+        ):
             with self.subTest(model=model):
                 self.assertIn(model, ids)
                 self.assertNotIn(f"codex-{model}", ids)

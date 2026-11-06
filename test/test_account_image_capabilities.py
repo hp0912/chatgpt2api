@@ -76,8 +76,11 @@ class AccountCapabilityTests(unittest.TestCase):
         self.assertEqual(split_image_model("plus-gpt-image-2"), (None, None))
         self.assertEqual(split_image_model("unknown-image-model"), (None, None))
 
-    def test_split_image_25_models_preserves_variant_and_codex_plan(self) -> None:
-        for model in ("gpt-image-2.5-flare", "gpt-image-2.5-sunburst"):
+    def test_split_image_model_variants_preserves_variant_and_codex_plan(self) -> None:
+        for model in (
+            "gpt-image-2.5-flare", "gpt-image-2.5-sunburst",
+            "gpt-image-2.6-flare", "gpt-image-2.6-sunburst",
+        ):
             with self.subTest(model=model):
                 self.assertEqual(split_image_model(f" {model.upper()} "), (None, model))
                 self.assertEqual(split_image_model(f"codex-{model}"), (None, f"codex-{model}"))
